@@ -116,3 +116,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#  افزودن موتور سشن به تنظیمات SESSION_ENGINE
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
