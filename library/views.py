@@ -192,3 +192,15 @@ def delete_book(request, book_id):
         book.delete()
         return HttpResponse('Book deleted successfully!')
     return HttpResponse('Only delete method allowed!')
+
+
+@permission_required('library.hide_book', raise_exception=True)
+@login_required(login_url='/library/login-first/')
+@csrf_exempt
+def hide_book(request, book_id):
+    if request.method == 'GET':
+        book = get_object_or_404(Book, id=book_id)
+        book.hidden = not book.hidden
+        book.save()
+        return HttpResponse('Done!')
+    return HttpResponse('Only post method allowed!')

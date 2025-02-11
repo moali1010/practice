@@ -17,7 +17,15 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     publish_date = models.DateField()
     pages_count = models.IntegerField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        Author, related_name='books', on_delete=models.CASCADE
+    )
+    hidden = models.BooleanField(default=False)
+
+    class Meta:
+        permissions = [
+            ("hide_book", "Can make book hidden"),
+        ]
 
     def __str__(self):
         return self.title
