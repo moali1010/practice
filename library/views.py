@@ -1,6 +1,7 @@
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -170,3 +171,13 @@ def change_book(request, book_id):
             form.save()
             return HttpResponse('Book information updated!')
         return HttpResponse(f"{form.errors}")
+
+
+@permission_required('library.view_book', raise_exception=True)
+@login_required(login_url='/library/login-first/')
+@csrf_exempt
+def view_book(request, book_id):
+    if request.method == 'GET':
+        book = get_object_or_404(Book, id=book_id)
+        return HttpResponse(f"{model_to_dict(book)}")
+    return HttpResponse('Only get method allowed!')
