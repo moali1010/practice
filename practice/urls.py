@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 
 from library.views import (signup, user_list, register_user,
-                           login_user, logout_user, login_user2, change_password, logout_user2)
+                           login_user, logout_user, login_user2,
+                           change_password, logout_user2, login_first, add_book)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +31,6 @@ urlpatterns = [
     path('library/login/', login_user2),
     path('library/change-password/', change_password),
     path('library/logout/', logout_user2),
+    path('library/login-first/', login_first),
+    path('library/add-book/', add_book),
 ]

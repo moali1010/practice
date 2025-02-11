@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from library.models import Profile
+from library.models import Profile, Book
 
 
 class SignUpForm(UserCreationForm):
@@ -17,3 +17,9 @@ class SignUpForm(UserCreationForm):
             user=user, country=self.data['country']
         )
         return user
+
+
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ('title', 'publish_date', 'pages_count', 'author')

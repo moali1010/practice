@@ -1,9 +1,10 @@
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from library.forms import SignUpForm
+from library.forms import SignUpForm, BookForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
@@ -119,5 +120,38 @@ def change_password(request):
         request.user.save()
 
         return HttpResponse('Password changed successfully!')
+
+    return HttpResponse('Only post method allowed')
+
+
+# Authentication
+def login_first(request):
+    return HttpResponse('Please login first')
+
+
+@csrf_exempt
+@login_required(login_url='/library/login-first/')
+def logout(request):
+    if request.method == 'POST':
+        logout(request)
+        return HttpResponse('Logout successfully')
+
+    return HttpResponse('Only post method allowed')
+
+
+# Permission:
+# library.add_book, library.change_book,
+# library.delete_book, library.view_book
+@permission_required('library.add_book', raise_exception=True)
+@login_required(login_url='/library/login-first/')
+@csrf_exempt
+def add_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('Book added successfully')
+
+        return HttpResponse(f"{form.errors}")
 
     return HttpResponse('Only post method allowed')
