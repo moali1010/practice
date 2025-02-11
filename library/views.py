@@ -172,7 +172,7 @@ def change_book(request, book_id):
             return HttpResponse('Book information updated!')
         return HttpResponse(f"{form.errors}")
 
-# view
+
 @permission_required('library.view_book', raise_exception=True)
 @login_required(login_url='/library/login-first/')
 @csrf_exempt
@@ -181,3 +181,14 @@ def view_book(request, book_id):
         book = get_object_or_404(Book, id=book_id)
         return HttpResponse(f"{model_to_dict(book)}")
     return HttpResponse('Only get method allowed!')
+
+
+@permission_required('library.delete_book', raise_exception=True)
+@login_required(login_url='/library/login-first/')
+@csrf_exempt
+def delete_book(request, book_id):
+    if request.method == 'DELETE':
+        book = get_object_or_404(Book, id=book_id)
+        book.delete()
+        return HttpResponse('Book deleted successfully!')
+    return HttpResponse('Only delete method allowed!')
