@@ -2,10 +2,12 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from library.forms import SignUpForm, BookForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
+from library.models import Book
 
 
 @csrf_exempt
@@ -155,3 +157,16 @@ def add_book(request):
         return HttpResponse(f"{form.errors}")
 
     return HttpResponse('Only post method allowed')
+
+
+@permission_required('library.change_book', raise_exception=True)
+@login_required(login_url='/library/login-first/')
+@csrf_exempt
+def change_book(request, book_id):
+    if request.method == 'POST':
+        book = get_object_or_404(Book, id=book_id)
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('Book information updated!')
+        return HttpResponse(f"{form.errors}")
