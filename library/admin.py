@@ -1,7 +1,8 @@
 from django.contrib import admin, messages
 from django.db.models import F
 
-from library.models import Book, Author
+from library.models import Book, Author, CustomUser
+from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 
 # # Register your models here.
@@ -48,3 +49,46 @@ class BookAdmin(admin.ModelAdmin):
 
     add_pages.short_description = 'Add two page to selected books'
     #########################################################################
+
+# # واسط کاربری جدید متناسب با فیلدهای جدید
+# @admin.register(CustomUser)
+# class UserAdmin(DefaultUserAdmin):
+#     fieldsets = (
+#         (None, {'fields': ('username', 'password')}),
+#         ('Personal info', {
+#             'fields': (
+#                 'first_name',
+#                 'last_name',
+#                 'email',
+#                 'phone_number',
+#                 'country'
+#             )
+#         }),
+#         ('Permissions', {
+#             'fields': (
+#                 'is_active',
+#                 'is_staff',
+#                 'is_superuser',
+#                 'groups',
+#                 'user_permissions'
+#             ),
+#         }),
+#         ('Important dates', {'fields': ('last_login', 'date_joined')}),
+#     )
+#
+#     list_display = (
+#         'username',
+#         'email',
+#         'first_name',
+#         'last_name',
+#         'phone_number',
+#         'is_staff',
+#     )
+#
+#     search_fields = (
+#         'username',
+#         'first_name',
+#         'last_name',
+#         'phone_number',
+#         'email',
+#     )

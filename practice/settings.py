@@ -119,3 +119,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #  افزودن موتور سشن به تنظیمات SESSION_ENGINE
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# # جنگو مدل تعریف شده توسط ما را به عنوان مدل یوزر اصلی در نظر میگیرد
+# AUTH_USER_MODEL = 'library.CustomUser'
