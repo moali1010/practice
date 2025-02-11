@@ -35,5 +35,5 @@ urlpatterns = [
     path('library/login-first/', login_first),
     path('library/add-book/', add_book),
     path('library/change-book/<int:book_id>/', change_book),
-    path('library/view-book/<int:book_id>/', view_book),
+    path('library/view-book/<int:book_id>/', view_book), # view
 ]

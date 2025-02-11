@@ -172,7 +172,7 @@ def change_book(request, book_id):
             return HttpResponse('Book information updated!')
         return HttpResponse(f"{form.errors}")
 
-
+# view
 @permission_required('library.view_book', raise_exception=True)
 @login_required(login_url='/library/login-first/')
 @csrf_exempt
