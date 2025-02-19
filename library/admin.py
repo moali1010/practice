@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.db.models import F
 
-from library.models import Book, Author, CustomUser
+from library.models import Book, Author
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 
