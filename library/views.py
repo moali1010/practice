@@ -7,8 +7,10 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from library.forms import SignUpForm, BookForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
 from library.models import Book
+import json
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 @csrf_exempt
@@ -176,11 +178,21 @@ def change_book(request, book_id):
 @permission_required('library.view_book', raise_exception=True)
 @login_required(login_url='/library/login-first/')
 @csrf_exempt
+@api_view(['GET'])
 def view_book(request, book_id):
-    if request.method == 'GET':
-        book = get_object_or_404(Book, id=book_id)
-        return HttpResponse(f"{model_to_dict(book)}")
-    return HttpResponse('Only get method allowed!')
+    try:
+        book = Book.objects.get(id=book_id)
+        if request.method == 'GET':
+            # book = get_object_or_404(Book, id=book_id)
+            # return HttpResponse(f"{model_to_dict(book)}")
+            response = {"id": book.id, "title": book.title, "author": str(book.author)}
+            # return HttpResponse(json.dumps(response))
+            # OR return HttpResponse(response_json, content_type='application/json'
+            return Response(data=response)
+    except Book.DoesNotExist:
+        return HttpResponse(json.dumps({'error': 'Book not found'}), status=404)
+    # return HttpResponse('Only get method allowed!')
+    return HttpResponse(json.dumps({'error': 'Only GET method allowed'}), status=405)
 
 
 @permission_required('library.delete_book', raise_exception=True)
@@ -192,3 +204,33 @@ def delete_book(request, book_id):
         book.delete()
         return HttpResponse('Book deleted successfully!')
     return HttpResponse('Only delete method allowed!')
+
+
+@csrf_exempt
+@api_view(['GET', 'PUT', "DELETE"])
+def book_detail_update_delete(request, book_id):
+    book = Book.objects.get(id=book_id)
+
+    if request.method == 'GET':
+        response = {"id": book.id, "pages": book.pages_count}
+        return Response(data=response)
+
+    if request.method == 'DELETE':
+        book.delete()
+        return HttpResponse('Book deleted')
+
+    if request.method == 'PUT':
+        # print(request.data)
+
+        # payload = json.loads(request.body)
+        # pages_count = payload.get('pages', None)
+
+        pages_count = request.data['pages']
+        if pages_count is None:
+            return HttpResponse("Error: number is not provided")
+
+        book.pages_count = pages_count
+        book.save()
+        return HttpResponse('Book updated')
+
+    return HttpResponse('Method not allowed')

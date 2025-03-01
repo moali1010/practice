@@ -20,7 +20,8 @@ from django.urls import path
 from library.views import (signup, user_list, register_user,
                            login_user, logout_user, login_user2,
                            change_password, logout_user2, login_first,
-                           add_book, change_book, view_book, delete_book)
+                           add_book, change_book, view_book, delete_book,
+                           book_detail_update_delete)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,4 +38,5 @@ urlpatterns = [
     path('library/change-book/<int:book_id>/', change_book),
     path('library/view-book/<int:book_id>/', view_book),
     path('library/delete-book/<int:book_id>/', delete_book),
+    path('books/<int:book_id>/', book_detail_update_delete),
 ]
