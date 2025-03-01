@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from library.forms import SignUpForm, BookForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -11,6 +12,7 @@ from library.models import Book
 import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 @csrf_exempt
@@ -221,16 +223,21 @@ def book_detail_update_delete(request, book_id):
 
     if request.method == 'PUT':
         # print(request.data)
-
         # payload = json.loads(request.body)
         # pages_count = payload.get('pages', None)
-
         pages_count = request.data['pages']
         if pages_count is None:
             return HttpResponse("Error: number is not provided")
-
         book.pages_count = pages_count
         book.save()
         return HttpResponse('Book updated')
 
     return HttpResponse('Method not allowed')
+
+
+class HelloView(APIView):
+    def get(self, request):
+        return Response({'msg': 'Hello GET!'})
+
+    def post(self, request):
+        return Response({'msg': 'Hello POST!'})
