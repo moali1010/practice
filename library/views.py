@@ -1,18 +1,18 @@
-from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
-from django.forms.models import model_to_dict
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
+from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.views import View
-from django.views.decorators.csrf import csrf_exempt
 from library.forms import SignUpForm, BookForm
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from library.models import Book
-import json
+from library.models import Book, Author
+from library.serializers import BookSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
+import json
 
 
 @csrf_exempt
@@ -241,3 +241,25 @@ class HelloView(APIView):
 
     def post(self, request):
         return Response({'msg': 'Hello POST!'})
+
+
+class BookListAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        title = data.get("title")
+        author_id = data.get("author_id")
+        author = Author.objects.get(id=author_id)
+        print(str(author))
+        pages_count = data.get("pages_count")
+        publish_date = data.get("publish_date")
+        book = Book.objects.create(
+            title=title, author=author,
+            pages_count=pages_count,
+            publish_date=publish_date)  # ساختن کتاب
+        serializer = BookSerializer(book)  # ترجمه به json
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

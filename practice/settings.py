@@ -123,3 +123,9 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # # جنگو مدل تعریف شده توسط ما را به عنوان مدل یوزر اصلی در نظر میگیرد
 # AUTH_USER_MODEL = 'library.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
