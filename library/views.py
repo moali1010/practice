@@ -9,8 +9,10 @@ from library.forms import SignUpForm, BookForm
 from library.models import Book, Author
 from library.serializers import BookSerializer
 from rest_framework.decorators import api_view
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework import status
 import json
 
@@ -263,3 +265,14 @@ class BookListAPIView(APIView):
             publish_date=publish_date)  # ساختن کتاب
         serializer = BookSerializer(book)  # ترجمه به json
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class BookListCreateAPIView(GenericAPIView, ListModelMixin, CreateModelMixin):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
