@@ -22,7 +22,8 @@ from library.views import (signup, user_list, register_user,
                            change_password, logout_user2, login_first,
                            add_book, change_book, view_book, delete_book,
                            book_detail_update_delete, HelloView,
-                           BookListAPIView, BookListCreateAPIView)
+                           BookListAPIView, BookListCreateAPIView,
+                           BookListCreateAPIView2)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,4 +44,5 @@ urlpatterns = [
     path('hello/', HelloView.as_view()),
     path('books/seri/', BookListAPIView.as_view()),
     path('book-list-create/', BookListCreateAPIView.as_view()),
+    path('book-list-create2/', BookListCreateAPIView2.as_view()),
 ]
