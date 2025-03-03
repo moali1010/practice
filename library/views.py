@@ -281,3 +281,8 @@ class BookListCreateAPIView(GenericAPIView, ListModelMixin, CreateModelMixin):
 class BookListCreateAPIView2(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
+
+class BookRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):  # get, put, delete
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
