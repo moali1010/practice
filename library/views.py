@@ -2,13 +2,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
-from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from library.forms import SignUpForm, BookForm
 from library.models import Book, Author
 from library.serializers import BookSerializer
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -259,7 +259,41 @@ class HelloView(APIView):
         return Response({'msg': 'Hello GET!'})
 
     def post(self, request):
-        return Response({'msg': 'Hello POST!'})
+        if request.user.is_authenticated:
+            return Response({'msg': 'Hello POST!'})
+
+
+class HelloAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        return Response(data={'message': f"Hello {request.user.username}!"})
+
+
+# @api_view(['POST'])
+# def new_login_rest(request):
+#     from rest_framework.authtoken.models import Token
+#
+#     user = User.objects.get(username=request.data['username'])
+#     if user.check_password(request.data['password']):
+#         token = Token.objects.create(user=user, key=Token.generate_key())
+#
+#     return HttpResponse({'token': token.key})
+
+@api_view(['GET'])
+def new_logout(request):
+    if not request.user.is_authenticated:
+        return Response({'msg': 'You are not logged in'})
+    request.user.auth_token.delete()
+    return Response({'msg': 'You are logged out'})
+
+
+class LogoutAPIView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response(data={'message': f"Bye {request.user.username}!"})
 
 
 class BookListAPIView(APIView):
