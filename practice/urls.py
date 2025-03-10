@@ -45,5 +45,5 @@ urlpatterns = [
     path('books/seri/', BookListAPIView.as_view()),
     path('book-list-create/', BookListCreateAPIView.as_view(), name='book-list-create'),
     path('book-list-create2/', BookListCreateAPIView2.as_view()),
-    path('books/<int:pk>/', BookRetrieveUpdateDestroyAPIView.as_view(), name='book-detail'),
+    path('books2/<int:pk>/', BookRetrieveUpdateDestroyAPIView.as_view(), name='book-detail'),
 ]

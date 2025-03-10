@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
+from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -211,17 +212,33 @@ def delete_book(request, book_id):
 
 
 @csrf_exempt
-@api_view(['GET', 'PUT', "DELETE"])
+@api_view(['GET', 'PUT', "DELETE", "POST"])
 def book_detail_update_delete(request, book_id):
-    book = Book.objects.get(id=book_id)
+    # book = Book.objects.get(id=book_id)
+    book = get_object_or_404(Book, id=book_id)
 
     if request.method == 'GET':
-        response = {"id": book.id, "pages": book.pages_count}
-        return Response(data=response)
+        serializer = BookSerializer(instance=book)
+        # response = {"id": book.id, "pages": book.pages_count}
+        # return Response(data=response)
+        data = serializer.data
+        return Response({'data': data})
 
     if request.method == 'DELETE':
         book.delete()
         return HttpResponse('Book deleted')
+
+    if request.method == 'POST':
+        serializer = BookSerializer(data=request.data)
+        # payload = json.loads(request.body)
+        # pages_count = payload.get('pages_count', None)
+        # if pages_count is None:
+        #     return HttpResponse('Pages count is required!')
+        if not serializer.is_valid():
+            return Response(data=serializer.errors, status=400)
+        # Book.objects.create(pages_count=serializer.data['pages_count'])
+        serializer.save()
+        return HttpResponse('Book updated successfully!')
 
     if request.method == 'PUT':
         # print(request.data)
