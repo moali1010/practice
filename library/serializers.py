@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from library.models import Author, Book
+from library.models import Author, Book, Profile
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -38,3 +38,9 @@ class BookSerializer(serializers.ModelSerializer):
         instance.pages_count = validated_data.get('pages_count', instance.pages_count)
         instance.save()
         return instance
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'

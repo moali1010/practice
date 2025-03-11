@@ -6,11 +6,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from library.forms import SignUpForm, BookForm
-from library.models import Book, Author
-from library.serializers import BookSerializer
+from library.models import Book, Author, Profile
+# from library.permissions import IsFromSpecificCountry, IsBookAuthorOrAdmin
+from library.permissions import IsAuthorOrAdmin, IsOwnerOrReadOnly, OnlyAdminCanEdit
+from library.serializers import BookSerializer, ProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, UpdateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
@@ -346,4 +348,74 @@ class BookListCreateAPIView3(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
+
 # curl -H "Authorization: Bearer your_access_token" http://<your_domain>/api/some_protected_view/
+
+# class BookListView(APIView):  # فقط کاربران لاگین‌شده
+#     permission_classes = [IsAuthenticated]
+#
+#     def get(self, request):
+#         ...  # لیست کتاب‌ها را برگردان
+
+# class AuthorAdminView(APIView):  # فقط ادمین‌ها
+#     permission_classes = [IsAdminUser]
+#
+#     def delete(self, request, author_id):
+#         ...  # حذف نویسنده (فقط ادمین)
+
+# class IranBooksView(APIView):
+#     permission_classes = [IsAuthenticated, IsFromSpecificCountry]
+#
+#     def get(self, request):
+#         ...  # لیست کتاب‌های مربوط به ایران
+
+# class BookDetailView(RetrieveUpdateDestroyAPIView):
+#     queryset = Book.objects.all()
+#     serializer_class = BookSerializer
+#     permission_classes = [IsAuthenticated, IsBookAuthorOrAdmin]
+#
+#     def perform_update(self, serializer):
+#         serializer.save()
+
+# class CustomPermission(BasePermission):  # ترکیب پرمیشن‌ها
+#     def has_permission(self, request, view):
+#         user = request.user
+#         return (
+#                 user.is_authenticated and
+#                 (user.profile.country == "Iran" or user.is_staff)
+#         )
+
+# # ارتباط بین مدل‌ها و پرمیشن‌ها
+# class SameCountryBooksOnly(BasePermission):  # دسترسی به کتاب‌ها بر اساس کشور کاربر
+#     def has_permission(self, request, view):
+#         user_country = request.user.profile.country
+#         author_country = Author.objects.filter(books__id=view.kwargs['book_id']).first().country
+#         return user_country == author_country
+
+
+class BookUpdateView(UpdateAPIView):  # ویرایش کتاب فقط توسط نویسنده یا ادمین
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated, IsAuthorOrAdmin]
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+# پرمیشن‌های کلی (Global Permissions)
+class BookDetailAPIView(RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = (IsAuthenticated,)  # فقط کاربران لاگین شده می‌توانند جزئیات کتاب را ببینند.
+    # permission_classes = (OnlyAdminCanEdit,)
+
+
+# پرمیشن‌های سطح شیء (Object-level Permissions)
+class ProfileDetailAPIView(RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
+    def get_object(self):
+        # فرض کنید می‌خواهیم فقط پروفایل کاربر درخواست دهنده برگردانده شود.
+        return self.request.user.profile
