@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework import status, generics
+from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 
 
@@ -337,3 +338,12 @@ class BookListCreateAPIView2(generics.ListCreateAPIView):
 class BookRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):  # get, put, delete
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
+
+class BookListCreateAPIView3(generics.ListCreateAPIView):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+# curl -H "Authorization: Bearer your_access_token" http://<your_domain>/api/some_protected_view/

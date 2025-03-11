@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token  # or ObtainAuthToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from library.views import (signup, user_list, register_user,
                            login_user, logout_user, login_user2,
@@ -25,7 +26,7 @@ from library.views import (signup, user_list, register_user,
                            book_detail_update_delete, HelloView,
                            BookListAPIView, BookListCreateAPIView,
                            BookListCreateAPIView2, BookRetrieveUpdateDestroyAPIView,
-                           new_logout, )
+                           new_logout, BookListCreateAPIView3, )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -48,7 +49,9 @@ urlpatterns = [
     path('book-list-create/', BookListCreateAPIView.as_view(), name='book-list-create'),
     path('book-list-create2/', BookListCreateAPIView2.as_view()),
     path('books2/<int:pk>/', BookRetrieveUpdateDestroyAPIView.as_view(), name='book-detail'),
-    path('login2/',  view=obtain_auth_token),
+    path('login2/', view=obtain_auth_token),
     path('logout2/', new_logout),
-
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/books/', BookListCreateAPIView3.as_view()),
 ]
