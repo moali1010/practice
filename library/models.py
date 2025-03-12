@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 
@@ -8,6 +9,12 @@ class Author(models.Model):
     last_name = models.CharField(max_length=100)
     birth_date = models.DateField(blank=True, null=True)
     country = models.CharField(max_length=100)
+
+    def is_young(self):
+        return self.birth_date > datetime.date(1990, 1, 1)
+
+    def is_old(self):
+        return self.birth_date < datetime.date(1960, 1, 1)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
