@@ -1,3 +1,6 @@
+import time
+import asyncio
+from asgiref.sync import sync_to_async
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -423,3 +426,57 @@ class ProfileDetailAPIView(RetrieveUpdateAPIView):
     def get_object(self):
         # فرض کنید می‌خواهیم فقط پروفایل کاربر درخواست دهنده برگردانده شود.
         return self.request.user.profile
+
+
+def get_books():
+    print("getting books ....")
+    time.sleep(2)
+    qs = Book.objects.all()
+    print(qs)
+    print("all books fetched")
+
+
+def get_authors():
+    print("getting authors ...")
+    time.sleep(5)
+    qs = Author.objects.all()
+    print(qs)
+    print("all authors fetched")
+
+
+@sync_to_async
+def get_books_async():
+    print("getting books ....")
+    time.sleep(2)
+    qs = Book.objects.all()
+    print(qs)
+    print("all books fetched")
+
+
+@sync_to_async
+def get_authors_async():
+    print("getting authors ...")
+    time.sleep(5)
+    qs = Author.objects.all()
+    print(qs)
+    print("all authors fetched")
+
+
+def sync_view(request):
+    start_time = time.time()
+    get_books()
+    get_authors()
+    total = time.time() - start_time
+    return HttpResponse(f"time taken {total}")
+
+
+async def async_view(request):
+    start_time = time.time()
+    ### approach 1
+    # movie_task = asyncio.ensure_future(get_books_async())
+    # theatre_task = asyncio.ensure_future(get_authors_async())
+    # await asyncio.wait([movie_task, theatre_task])
+    ### approach 2 using gather
+    await asyncio.gather(get_books_async(), get_authors_async())
+    total = time.time() - start_time
+    return HttpResponse(f"time taken async {total}")

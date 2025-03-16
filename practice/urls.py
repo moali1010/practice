@@ -26,7 +26,7 @@ from library.views import (signup, user_list, register_user,
                            book_detail_update_delete, HelloView,
                            BookListAPIView, BookListCreateAPIView,
                            BookListCreateAPIView2, BookRetrieveUpdateDestroyAPIView,
-                           new_logout, BookListCreateAPIView3, )
+                           new_logout, BookListCreateAPIView3, sync_view, async_view, )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -54,4 +54,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/books/', BookListCreateAPIView3.as_view()),
+    path("sync_view/", sync_view),
+    path("async_view/", async_view)
 ]
