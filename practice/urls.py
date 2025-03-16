@@ -50,7 +50,7 @@ urlpatterns = [
     path('book-list-create2/', BookListCreateAPIView2.as_view()),
     path('books2/<int:pk>/', BookRetrieveUpdateDestroyAPIView.as_view(), name='book-detail'),
     path('login2/', view=obtain_auth_token),
-    path('logout2/', new_logout),
+    path('logout2/', new_logout, name='new_logout'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/books/', BookListCreateAPIView3.as_view()),

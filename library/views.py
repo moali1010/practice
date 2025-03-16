@@ -11,7 +11,7 @@ from library.models import Book, Author, Profile
 from library.permissions import IsAuthorOrAdmin, IsOwnerOrReadOnly, OnlyAdminCanEdit
 from library.serializers import BookSerializer, ProfileSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import GenericAPIView, UpdateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -283,12 +283,15 @@ class HelloAPIView(GenericAPIView):
 #
 #     return HttpResponse({'token': token.key})
 
-@api_view(['GET'])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def new_logout(request):
-    if not request.user.is_authenticated:
-        return Response({'msg': 'You are not logged in'})
+    # if not request.user.is_authenticated:
+    #     return Response({'msg': 'You are not logged in'})
+    # request.user.auth_token.delete()
+    # return Response({'msg': 'You are logged out'})
     request.user.auth_token.delete()
-    return Response({'msg': 'You are logged out'})
+    return Response({'msg': 'You are logged out'}, status=200)
 
 
 class LogoutAPIView(GenericAPIView):
@@ -324,6 +327,7 @@ class BookListAPIView(APIView):
 class BookListCreateAPIView(GenericAPIView, ListModelMixin, CreateModelMixin):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

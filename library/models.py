@@ -35,6 +35,9 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.user.username
+
 # class CustomUser(AbstractUser):
 #     email = models.EmailField(unique=True)
 #     country = models.CharField(max_length=100)
