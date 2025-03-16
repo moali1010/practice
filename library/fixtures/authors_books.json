@@ -1,0 +1,40 @@
+[
+  {
+    "model": "library.author",
+    "pk": 1,
+    "fields": {
+      "first_name": "George",
+      "last_name": "Orwell",
+      "birth_date": "1903-06-25",
+      "country": "UK"
+    }
+  },
+  {
+    "model": "library.book",
+    "pk": 1,
+    "fields": {
+      "title": "1984",
+      "publish_date": "1949-06-08",
+      "pages_count": 328,
+      "author": 1
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "testuser",
+      "password": "xxxxxxxxxxxxxx",
+      "is_active": true
+    }
+  },
+  {
+    "model": "library.profile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "phone_number": "1234567890",
+      "country": "Canada"
+    }
+  }
+]

@@ -6,7 +6,7 @@ from library.models import Author, Book, Profile
 
 # Create your tests here.
 # type>> python manage.py test
-class AuthorTests(TestCase):
+class ModelTests(TestCase):
     def setUp(self):
         self.author_young = Author.objects.create(
             first_name="John",
@@ -70,3 +70,26 @@ class AuthorTests(TestCase):
 
     def test_profile_phone_number(self):
         self.assertEqual(self.profile.phone_number, "1234567890")
+
+
+# python manage.py dumpdata library.Author library.Book auth.User library.Profile --indent 2 > library/fixtures/initial_data.json
+class AuthorTests(TestCase):
+    fixtures = ['authors_books.json']
+
+    # def test_author_count(self):
+    #     self.assertEqual(Author.objects.count(), 3)
+    def test_book_relation(self):
+        book = Book.objects.get(pk=1)
+        self.assertEqual(book.author.first_name, "George")
+
+
+class BookTests(TestCase):
+    fixtures = ['authors_books.json']
+
+    def test_book_str(self):
+        book = Book.objects.get(title="1984")
+        self.assertEqual(str(book), "1984")
+
+    def test_profile_relation(self):
+        profile = Profile.objects.get(pk=1)
+        self.assertEqual(profile.user.username, "testuser")
